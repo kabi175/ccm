@@ -11,6 +11,7 @@ import (
 type Submission struct {
 	Id      int    `json:"id"`
 	Status  string `json:"verdict"`
+	Time    int64  `json:"creationTimeSeconds"`
 	Problem struct {
 		Id    int    `json:"contestId"`
 		Index string `json:"index"`
