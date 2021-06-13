@@ -15,19 +15,23 @@ func TestUpdate(t *testing.T) {
 	users := []User{
 		{
 			Handle: "user5",
-			Level:  "5",
+			Level:  5,
+			Stars:  0,
 		},
 		{
 			Handle: "user2",
-			Level:  "2",
+			Level:  2,
+			Stars:  0,
 		},
 		{
 			Handle: "user3",
-			Level:  "3",
+			Level:  3,
+			Stars:  0,
 		},
 		{
 			Handle: "user4",
-			Level:  "4",
+			Level:  4,
+			Stars:  0,
 		},
 	}
 	t.Run(testname, func(t *testing.T) {

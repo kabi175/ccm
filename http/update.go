@@ -10,19 +10,23 @@ import (
 
 type User struct {
 	Handle string `json:"handle"`
-	Level  string `json:"level"`
+	Level  int    `json:"level"`
+	Stars  int    `json:"stars"`
 }
 
 func UpdateDB(users []User) (int, error) {
 	url := os.Getenv("POST_END_POINT")
 
 	if url == "" {
-		return 0, errors.New("Not a valid end point")
+		return 0, errors.New("Not a valid endpoint")
 	}
-
+	var userstr []UserStr
+	for _, user := range users {
+		userstr = append(userstr, conv(user))
+	}
 	postBody, err := json.Marshal(struct {
-		Payload []User `json:"payload"`
-	}{Payload: users})
+		Payload []UserStr `json:"payload"`
+	}{Payload: userstr})
 
 	if err != nil {
 		return 0, err
