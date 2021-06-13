@@ -1,1 +1,8 @@
 .env*
+*.json
+
+user-data/
+test-data/
+
+ccm
+main
