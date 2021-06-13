@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -15,18 +14,17 @@ func main() {
 		return
 	}
 	args := os.Args[1:]
-	if len(args) > 1 {
-		fmt.Println("args length exceded")
-		return
-	}
+	handler := handler{}
 	switch args[0] {
-	case "init":
-		handleInit("./user-data/valid_users.json")
 	case "verify":
-		handleVerify()
+		handler.Verify()
+	case "init":
+		handler.Init()
 	case "track":
-		handleTrack("./user-data/valid_users.json")
+		handler.Track()
+	case "extract":
+		handler.Extract(args[1])
 	default:
-		fmt.Printf("%s cmd not found", args[0])
+		handler.Default()
 	}
 }

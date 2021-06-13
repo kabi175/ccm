@@ -10,8 +10,36 @@ import (
 	"github.com/kabi175/ccm/service"
 )
 
-func handleTrack(filename string) {
+type handler struct{}
 
+func (handler) Default() {
+	fmt.Println("Invalid args")
+}
+
+func (handler) Extract(filename string) {
+
+	filepath := fmt.Sprintf("./user-data/%s", filename)
+	file, err := service.Extract(filepath)
+
+	if err != nil {
+		fmt.Println("Failed", err)
+		return
+	}
+
+	filepath = "./user-data/extracted.json"
+
+	err = ioutil.WriteFile(filepath, file, 0644)
+	if err != nil {
+		fmt.Println("Failed", err)
+		return
+	}
+
+	fmt.Println("Extracted")
+}
+
+func (handler) Track() {
+
+	filename := "./user-data/valid_users.json"
 	file, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Println(err)
@@ -40,17 +68,30 @@ func handleTrack(filename string) {
 		users = append(users, usr)
 	}
 	http.UpdateDB(users)
+	fmt.Println("DB Updated")
 }
 
-func handleInit(filename string) {
+func (handler) Init() {
+	var check string
+	fmt.Scanln(&check)
+	if check != "yes" {
+		return
+	}
+
+	filename := "./user-data/valid_users.json"
 	file, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	var users []service.User
+
+	var (
+		users []service.User
+		Users []http.User
+	)
+
 	err = json.Unmarshal(file, &users)
-	var Users []http.User
+
 	for _, user := range users {
 		usr := http.User{
 			Handle: user.Handle,
@@ -59,40 +100,51 @@ func handleInit(filename string) {
 		}
 		Users = append(Users, usr)
 	}
+
 	statusCode, err := http.UpdateDB(Users)
 	if err != nil || statusCode != 200 {
 		log.Println("error: ", err)
 		return
 	}
-	fmt.Println("Updated")
+
+	fmt.Println("Users Added")
 }
 
-func handleVerify() {
+func (handler) Verify() {
+
 	filename := "./user-data/data.json"
+
 	file, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
 	var userHandles []service.User
+
 	err = json.Unmarshal(file, &userHandles)
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
 	valid, invalid, err := service.Verify(filename)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	err = ioutil.WriteFile("valid_users.json", valid, 0644)
+
+	err = ioutil.WriteFile("./user-data/valid_users.json", valid, 0644)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	err = ioutil.WriteFile("invalid_users.json", invalid, 0644)
+
+	err = ioutil.WriteFile("./user-data/invalid_users.json", invalid, 0644)
 	if err != nil {
 		log.Println(err)
 		return
 	}
+
+	fmt.Println("Verification Completed")
 }
